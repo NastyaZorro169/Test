@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}UniDoc - Home{% endblock %}
+
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Welcome to UniDoc</h1>
+    <p class="lead">A powerful document management system</p>
+    <hr class="my-4">
+    <p>Manage your projects, tasks, and documents efficiently.</p>
+    <a class="btn btn-primary btn-lg" href="/web/projects/" role="button">View Projects</a>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Projects</h5>
+                <p class="card-text">Manage your projects and track their progress.</p>
+                <a href="/web/projects/" class="btn btn-primary">View Projects</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Tasks</h5>
+                <p class="card-text">Organize and track your tasks efficiently.</p>
+                <a href="/web/tasks/" class="btn btn-primary">View Tasks</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Documents</h5>
+                <p class="card-text">Store and manage your documents securely.</p>
+                <a href="/web/documents/" class="btn btn-primary">View Documents</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
