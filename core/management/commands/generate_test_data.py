@@ -17,10 +17,11 @@ class Command(BaseCommand):
         users = []
         for i in range(3):
             username = f'user{i+1}'
-            if not User.objects.filter(username=username).exists():
+            user = User.objects.filter(username=username).first()
+            if not user:
                 user = User.objects.create_user(username, f'{username}@example.com', 'password123')
-                users.append(user)
                 self.stdout.write(f'Создан пользователь {username}/password123')
+            users.append(user)
 
         # Создаем тему
         topic = Topic.objects.create(
@@ -120,11 +121,12 @@ class Command(BaseCommand):
         # Создаем комментарии
         for task in tasks:
             for i in range(2):
-                Comment.objects.create(
-                    content=f'Комментарий {i+1} к задаче {task.title}',
-                    task=task,
-                    author=random.choice(users) if users else None
-                )
+                if users:
+                    Comment.objects.create(
+                        content=f'Комментарий {i+1} к задаче {task.title}',
+                        task=task,
+                        author=random.choice(users)
+                    )
         self.stdout.write('Созданы комментарии')
 
         # Создаем документы
