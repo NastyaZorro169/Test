@@ -1,7 +1,7 @@
 import os
 import mlflow
 
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5001"))
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000"))
 # Инициализация Django для standalone-скрипта
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "unidoc.settings")
 import django
@@ -51,7 +51,7 @@ def train_model(X_texts, y):
 
 if __name__ == "__main__":
     # Настройка MLflow
-    mlflow.set_tracking_uri("http://localhost:5001")
+    mlflow.set_tracking_uri("http://mlflow:5000")
     mlflow.set_experiment("unidoc-document-tfidf-classification")
 
     # Загрузка данных

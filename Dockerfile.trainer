@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Копируем файл зависимостей и устанавливаем
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Копируем весь проект
+COPY . .
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Указываем entrypoint, который сначала применит миграции, затем запустит команду
+ENTRYPOINT ["/entrypoint.sh"]
+# Команда запуска train.py
+CMD ["python", "unidoc/ml/train.py"]

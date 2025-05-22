@@ -1,0 +1,63 @@
+
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: changeme
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mlflow"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    networks:
+      - mlflow-net
+
+  mlflow:
+    build:
+      context: ./deploy/mlflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "5001:5000"
+    environment:
+      BACKEND_STORE_URI: postgresql://mlflow:changeme@postgres:5432/mlflow
+      ARTIFACT_ROOT: s3://mlflowtuesday-artifacts/artifacts
+      AWS_ACCESS_KEY_ID: ${YC_S3_KEY}
+      AWS_SECRET_ACCESS_KEY: ${YC_S3_SECRET}
+    command: mlflow server --backend-store-uri=postgresql://mlflow:changeme@postgres:5432/mlflow --default-artifact-root=s3://mlflowtuesday-artifacts/artifacts --host 0.0.0.0 --port 5000
+    networks:
+      - mlflow-net
+
+  trainer:
+    build:
+      context: .
+      dockerfile: Dockerfile.trainer
+    depends_on:
+      - mlflow
+    environment:
+      PYTHONPATH: /app
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      AWS_ACCESS_KEY_ID: ${YC_S3_KEY}
+      AWS_SECRET_ACCESS_KEY: ${YC_S3_SECRET}
+      DB_NAME: mlflow
+      DB_USER: mlflow
+      DB_PASSWORD: changeme
+      DB_HOST: postgres
+      DB_PORT: 5432
+    command: python unidoc/ml/train.py
+    networks:
+      - mlflow-net
+
+volumes:
+  pgdata:
+
+networks:
+  mlflow-net:
