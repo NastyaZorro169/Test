@@ -7,6 +7,28 @@ on:
   pull_request:
 
 jobs:
+  infra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Terraform Apply
+        run: |
+          cd terraform/envs/dev
+          export TF_VAR_yc_token=$YC_KEY
+          export TF_VAR_s3_key=$YC_S3_KEY
+          export TF_VAR_s3_secret=$YC_S3_SECRET
+          export TF_VAR_cloud_id=$YC_CLOUD_ID
+          export TF_VAR_folder_id=$YC_FOLDER_ID
+          terraform init
+          terraform apply -auto-approve
+        env:
+          YC_KEY: ${{ secrets.YC_KEY }}
+          YC_S3_KEY: ${{ secrets.YC_S3_KEY }}
+          YC_S3_SECRET: ${{ secrets.YC_S3_SECRET }}
+          YC_CLOUD_ID: ${{ secrets.YC_CLOUD_ID }}
+          YC_FOLDER_ID: ${{ secrets.YC_FOLDER_ID }}
   mlflow-test:
     runs-on: ubuntu-latest
     env:
